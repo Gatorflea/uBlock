@@ -142,6 +142,9 @@
             return this.channels[channelName];
         }
     };
+    /******************************************************************************/
+    vAPI.setTimeout = window.setTimeout.bind(window);
+    /******************************************************************************/
 
     // The following code should run only in content pages
     if(location.protocol === "safari-extension:" || typeof safari !== "object") {

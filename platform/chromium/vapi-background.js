@@ -374,17 +374,17 @@ vAPI.messaging.broadcast = function(message) {
 
 // This allows to avoid creating a closure for every single message which
 // expects an answer. Having a closure created each time a message is processed
-// has been always bothering me. Another benefit of the implementation here 
+// has been always bothering me. Another benefit of the implementation here
 // is to reuse the callback proxy object, so less memory churning.
 //
 // https://developers.google.com/speed/articles/optimizing-javascript
 // "Creating a closure is significantly slower then creating an inner
-//  function without a closure, and much slower than reusing a static 
+//  function without a closure, and much slower than reusing a static
 //  function"
 //
 // http://hacksoflife.blogspot.ca/2015/01/the-four-horsemen-of-performance.html
-// "the dreaded 'uniformly slow code' case where every function takes 1% 
-//  of CPU and you have to make one hundred separate performance optimizations 
+// "the dreaded 'uniformly slow code' case where every function takes 1%
+//  of CPU and you have to make one hundred separate performance optimizations
 //  to improve performance at all"
 //
 // http://jsperf.com/closure-no-closure/2
@@ -528,6 +528,10 @@ vAPI.contextMenu = {
         chrome.contextMenus.remove(this.menuId);
     }
 };
+
+/******************************************************************************/
+
+vAPI.setTimeout = window.setTimeout.bind(window);
 
 /******************************************************************************/
 

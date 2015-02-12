@@ -322,7 +322,7 @@ var renderPrivacyExposure = function() {
         desHostnameDone[des] = true;
     }
 
-    // The root page domain must always be counted as connected: that's from 
+    // The root page domain must always be counted as connected: that's from
     // where the root document was fetched.
     // https://github.com/gorhill/uBlock/issues/759
     // The root page domain must be counted if and only if it was actually
@@ -621,7 +621,7 @@ var pollForContentChange = (function() {
         if ( pollTimer !== null ) {
             return;
         }
-        pollTimer = setTimeout(pollCallback, 1500);
+        pollTimer = vAPI.setTimeout(pollCallback, 1500);
     };
 
     return poll;

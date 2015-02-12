@@ -88,7 +88,7 @@ AsyncJobManager.prototype.restartTimer = function() {
     if ( when < this.timerWhen ) {
         clearTimeout(this.timerId);
         this.timerWhen = when;
-        this.timerId = setTimeout(processJobs, Math.max(when - Date.now(), 10));
+        this.timerId = vAPI.setTimeout(processJobs, Math.max(when - Date.now(), 10));
     }
 };
 

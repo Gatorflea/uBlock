@@ -113,7 +113,7 @@ var messager = vAPI.messaging.channel('contentscript-end.js');
     };
 
     // https://github.com/gorhill/uBlock/issues/452
-    // This needs to be executed *after* the response from our query is 
+    // This needs to be executed *after* the response from our query is
     // received, not at `DOMContentLoaded` time, or else there is a good
     // likeliness to outrun contentscript-start.js, which may still be waiting
     // on a response from its own query.
@@ -366,7 +366,7 @@ var messager = vAPI.messaging.channel('contentscript-end.js');
         if ( processHighHighGenericsTimer !== null ) {
             clearTimeout(processHighHighGenericsTimer);
         }
-        processHighHighGenericsTimer = setTimeout(processHighHighGenerics, 300);
+        processHighHighGenericsTimer = vAPI.setTimeout(processHighHighGenerics, 300);
     };
 
     // Extract all ids: these will be passed to the cosmetic filtering
@@ -494,7 +494,7 @@ var messager = vAPI.messaging.channel('contentscript-end.js');
             // I arbitrarily chose 100 ms for now:
             // I have to compromise between the overhead of processing too few
             // nodes too often and the delay of many nodes less often.
-            addedNodeListsTimer = setTimeout(mutationObservedHandler, 100);
+            addedNodeListsTimer = vAPI.setTimeout(mutationObservedHandler, 100);
         }
     };
 

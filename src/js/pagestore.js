@@ -202,7 +202,7 @@ var logBufferJanitor = function() {
             liveLogBuffers.splice(i, 1);
         }
     }
-    setTimeout(logBufferJanitor, logBufferJanitorPeriod);
+    vAPI.setTimeout(logBufferJanitor, logBufferJanitorPeriod);
 };
 
 // The janitor will look for stale log buffer every 2 minutes.
@@ -212,7 +212,7 @@ var logBufferJanitorPeriod = 2 * 60 * 1000;
 // thus removed from memory.
 var logBufferObsoleteAfter = 30 * 1000;
 
-setTimeout(logBufferJanitor, logBufferJanitorPeriod);
+vAPI.setTimeout(logBufferJanitor, logBufferJanitorPeriod);
 
 /******************************************************************************/
 /******************************************************************************/
@@ -373,7 +373,10 @@ NetFilteringResultCache.prototype.prune = function() {
 
 NetFilteringResultCache.prototype.pruneAsync = function() {
     if ( this.timer === null ) {
-        this.timer = setTimeout(this.boundPruneAsyncCallback, this.shelfLife * 2);
+        this.timer = vAPI.setTimeout(
+            this.boundPruneAsyncCallback,
+            this.shelfLife * 2
+        );
     }
 };
 

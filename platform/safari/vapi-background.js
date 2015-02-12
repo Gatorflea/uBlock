@@ -360,7 +360,7 @@
                         }
                     });
                     if(typeof callback === 'function') {
-                        setTimeout(callback, 13);
+                        vAPI.setTimeout(callback, 13);
                     }
                 }
             });
@@ -488,7 +488,7 @@
     vAPI.messaging = {
         listeners: {},
         defaultHandler: null,
-        NOOPFUNC: function() {}, 
+        NOOPFUNC: function() {},
         UNHANDLED: 'vAPI.messaging.notHandled'
     };
 
@@ -769,6 +769,10 @@
         this.onContextMenu = null;
         this.onContextMenuCmd = null;
     };
+
+    /******************************************************************************/
+
+    vAPI.setTimeout = window.setTimeout.bind(window);
 
     /******************************************************************************/
 

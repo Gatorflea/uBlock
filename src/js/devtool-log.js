@@ -165,7 +165,7 @@ var onBufferRead = function(buffer) {
     if ( Array.isArray(buffer) ) {
         renderLogBuffer(buffer);
     }
-    setTimeout(readLogBuffer, 1000);
+    vAPI.setTimeout(readLogBuffer, 1000);
 };
 
 /******************************************************************************/

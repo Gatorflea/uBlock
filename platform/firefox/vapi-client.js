@@ -168,6 +168,12 @@ window.addEventListener('pageshow', vAPI.messaging.toggleListener, true);
 
 /******************************************************************************/
 
+vAPI.setTimeout = function(callback, delay) {
+    return setTimeout(function() { callback(); }, delay);
+};
+
+/******************************************************************************/
+
 })(this);
 
 /******************************************************************************/
