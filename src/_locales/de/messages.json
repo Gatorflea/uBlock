@@ -180,7 +180,7 @@
     "description":""
   },
   "popupHitDomainCountPrompt":{
-    "message":"Verbundene Domains",
+    "message":"verbundene Domains",
     "description":"appears in popup"
   },
   "popupHitDomainCount":{
@@ -338,6 +338,22 @@
   "1pApplyChanges":{
     "message":"Änderungen anwenden",
     "description":"English: Apply changes"
+  },
+  "rulesPermanentHeader":{
+    "message":"Permanente Regeln",
+    "description":"header"
+  },
+  "rulesTemporaryHeader":{
+    "message":"Temporäre Regeln",
+    "description":"header"
+  },
+  "rulesRevert":{
+    "message":"Rückgängig machen",
+    "description":"This will remove all temporary rules"
+  },
+  "rulesCommit":{
+    "message":"Dauerhaft speichern",
+    "description":"This will persist temporary rules"
   },
   "rulesEdit":{
     "message":"Bearbeiten",

@@ -160,23 +160,23 @@
     "description":""
   },
   "popup3pAnyRulePrompt":{
-    "message":"Scripts de terceiros",
+    "message":"terceiros",
     "description":""
   },
   "popupInlineScriptRulePrompt":{
-    "message":"Scripts em linha",
+    "message":"scripts em linha",
     "description":""
   },
   "popup1pScriptRulePrompt":{
-    "message":"Scripts de primeiros",
+    "message":"scripts de primeiros",
     "description":""
   },
   "popup3pScriptRulePrompt":{
-    "message":"Scripts de terceiros",
+    "message":"scripts de terceiros",
     "description":""
   },
   "popup3pFrameRulePrompt":{
-    "message":"Frames de terceiros",
+    "message":"frames de terceiros",
     "description":""
   },
   "popupHitDomainCountPrompt":{
@@ -339,6 +339,22 @@
     "message":"Aplicar alterações",
     "description":"English: Apply changes"
   },
+  "rulesPermanentHeader":{
+    "message":"Regras permanentes",
+    "description":"header"
+  },
+  "rulesTemporaryHeader":{
+    "message":"Regras temporárias",
+    "description":"header"
+  },
+  "rulesRevert":{
+    "message":"Reverter",
+    "description":"This will remove all temporary rules"
+  },
+  "rulesCommit":{
+    "message":"Submeter",
+    "description":"This will persist temporary rules"
+  },
   "rulesEdit":{
     "message":"Editar",
     "description":"Will enable manual-edit mode (textarea)"
@@ -356,7 +372,7 @@
     "description":""
   },
   "rulesExport":{
-    "message":"Exportar para ficheiro...",
+    "message":"Exportar para ficheiro",
     "description":""
   },
   "rulesDefaultFileName":{

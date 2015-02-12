@@ -99,7 +99,7 @@ var hashFromPopupData = function(reset) {
     }
 
     var hasher = [];
-    var rules = popupData.dynamicFilterRules;
+    var rules = popupData.firewallRules;
     var rule;
     for ( var key in rules ) {
         if ( rules.hasOwnProperty(key) === false ) {
@@ -110,7 +110,7 @@ var hashFromPopupData = function(reset) {
             hasher.push(rule);
         }
     }
-    hasher.push(uDom('#switch').hasClass('off'));
+    hasher.push(uDom('body').hasClass('off'));
 
     var hash = hasher.sort().join('');
     if ( reset ) {
@@ -141,7 +141,7 @@ var rulekeyCompare = function(a, b) {
 
 /******************************************************************************/
 
-var addDynamicFilterRow = function(des) {
+var addFirewallRow = function(des) {
     var row = rowsToRecycle.pop();
     if ( row.length === 0 ) {
         row = uDom('#templates > div:nth-of-type(1)').clone();
@@ -155,7 +155,7 @@ var addDynamicFilterRow = function(des) {
     row.toggleClass('isDomain', des === hnDetails.domain);
     row.toggleClass('allowed', hnDetails.allowCount !== 0);
     row.toggleClass('blocked', hnDetails.blockCount !== 0);
-    row.appendTo('#dynamicFilteringContainer');
+    row.appendTo('#firewallContainer');
 
     // Hacky? I couldn't figure a CSS recipe for this problem.
     // I do not want the left pane -- optional and hidden by defaut -- to
@@ -165,14 +165,19 @@ var addDynamicFilterRow = function(des) {
     if ( popupHeight === undefined ) {
         popupHeight = uDom('#panes > div:nth-of-type(1)').nodeAt(0).offsetHeight;
         uDom('#panes > div:nth-of-type(2)').css('height', popupHeight + 'px');
+
+        // The padlock must be manually positioned:
+        // - It's vertical position depends on the height on the title bar.
+        var rect = document.getElementById('gotoPrefs').getBoundingClientRect();
+        document.getElementById('saveRules').style.setProperty('top', (rect.bottom + 4) + 'px');
     }
     return row;
 };
 
 /******************************************************************************/
 
-var updateDynamicFilterCell = function(scope, des, type, rule) {
-    var selector = '#dynamicFilteringContainer span[data-src="' + scope + '"][data-des="' + des + '"][data-type="' + type + '"]';
+var updateFirewallCell = function(scope, des, type, rule) {
+    var selector = '#firewallContainer span[data-src="' + scope + '"][data-des="' + des + '"][data-type="' + type + '"]';
     var cell = uDom(selector);
 
     // This should not happen
@@ -230,48 +235,59 @@ var updateDynamicFilterCell = function(scope, des, type, rule) {
 
 /******************************************************************************/
 
-var updateAllDynamicFilters = function() {
-    var rules = popupData.dynamicFilterRules;
+var updateAllFirewallCells = function() {
+    var rules = popupData.firewallRules;
     for ( var key in rules ) {
         if ( rules.hasOwnProperty(key) === false ) {
             continue;
         }
-        updateDynamicFilterCell(
+        updateFirewallCell(
             key.charAt(0),
             key.slice(2, key.indexOf(' ', 2)),
             key.slice(key.lastIndexOf(' ') + 1),
             rules[key]
         );
     }
+
+    uDom('#firewallContainer').toggleClass(
+        'dirty',
+        popupData.matrixIsDirty === true
+    );
 };
 
 /******************************************************************************/
 
-var buildAllDynamicFilters = function() {
+var buildAllFirewallRows = function() {
     // Do this before removing the rows
     if ( dfHotspots === null ) {
-        dfHotspots = uDom('#actionSelector').on('click', 'span', setDynamicFilterHandler);
+        dfHotspots = uDom('#actionSelector').on('click', 'span', setFirewallRuleHandler);
     }
     dfHotspots.detach();
 
     // Remove and reuse all rows: the order may have changed, we can't just
     // reuse them in-place.
-    rowsToRecycle = uDom('#dynamicFilteringContainer > div:nth-of-type(7) ~ div').detach();
+    rowsToRecycle = uDom('#firewallContainer > div:nth-of-type(7) ~ div').detach();
 
     var n = allHostnameRows.length;
     for ( var i = 0; i < n; i++ ) {
-        addDynamicFilterRow(allHostnameRows[i]);
+        addFirewallRow(allHostnameRows[i]);
     }
 
     if ( dfPaneBuilt !== true ) {
-        uDom('#dynamicFilteringContainer')
-            .on('click', 'span[data-src]', unsetDynamicFilterHandler)
+        uDom('#firewallContainer')
+            .on('click', 'span[data-src]', unsetFirewallRuleHandler)
             .on('mouseenter', '[data-src]', mouseenterCellHandler)
             .on('mouseleave', '[data-src]', mouseleaveCellHandler);
         dfPaneBuilt = true;
     }
 
-    updateAllDynamicFilters();
+    // The padlock must be manually positioned:
+    // - Its horizontal position depends on whether there is a vertical
+    //   scrollbar.
+    var rect = document.getElementById('firewallContainer').getBoundingClientRect();
+    document.getElementById('saveRules').style.setProperty('left', (rect.left + 4) + 'px');
+
+    updateAllFirewallCells();
 };
 
 /******************************************************************************/
@@ -284,7 +300,7 @@ var renderPrivacyExposure = function() {
     // Sort hostnames. First-party hostnames must always appear at the top
     // of the list.
     var desHostnameDone = {};
-    var keys = Object.keys(popupData.dynamicFilterRules)
+    var keys = Object.keys(popupData.firewallRules)
                      .sort(rulekeyCompare);
     var key, des, hnDetails;
     for ( var i = 0; i < keys.length; i++ ) {
@@ -311,7 +327,10 @@ var renderPrivacyExposure = function() {
 
     // The root page domain must always be counted as connected: that's from 
     // where the root document was fetched.
-    if ( allDomains[popupData.pageDomain] !== true ) {
+    // https://github.com/gorhill/uBlock/issues/759
+    // The root page domain must be counted if and only if it was actually
+    // obtained through a network request.
+    if ( allDomainCount !== 0 && allDomains[popupData.pageDomain] !== true ) {
         allDomains[popupData.pageDomain] = true;
         touchedDomainCount += 1;
     }
@@ -330,7 +349,7 @@ var renderPopup = function() {
     uDom('#version').text(popupData.appVersion);
     uDom('body').toggleClass('advancedUser', popupData.advancedUserEnabled);
 
-    uDom('#switch').toggleClass(
+    uDom('body').toggleClass(
         'off',
         (popupData.pageURL === '') ||
         (!popupData.netFilteringSwitch) ||
@@ -381,7 +400,7 @@ var renderPopup = function() {
 
     // Build dynamic filtering pane only if in use
     if ( dfPaneVisible ) {
-        buildAllDynamicFilters();
+        buildAllFirewallRows();
     }
 };
 
@@ -398,7 +417,7 @@ var toggleNetFilteringSwitch = function(ev) {
         what: 'toggleNetFiltering',
         url: popupData.pageURL,
         scope: ev.ctrlKey || ev.metaKey ? 'page' : '',
-        state: !uDom(this).toggleClass('off').hasClass('off'),
+        state: !uDom('body').toggleClass('off').hasClass('off'),
         tabId: popupData.tabId
     });
 
@@ -439,7 +458,7 @@ var gotoURL = function(ev) {
 
 /******************************************************************************/
 
-var toggleDynamicFiltering = function() {
+var toggleFirewallPane = function() {
     if ( popupData.advancedUserEnabled === false ) {
         return;
     }
@@ -454,7 +473,7 @@ var toggleDynamicFiltering = function() {
     // Dynamic filtering pane may not have been built yet
     uDom('#panes').toggleClass('dfEnabled', popupData.dfEnabled);
     if ( popupData.dfEnabled && dfPaneBuilt === false ) {
-        buildAllDynamicFilters();
+        buildAllFirewallRows();
     }
 };
 
@@ -472,43 +491,45 @@ var mouseleaveCellHandler = function() {
 
 /******************************************************************************/
 
-var setDynamicFilter = function(src, des, type, action) {
+var setFirewallRule = function(src, des, type, action, persist) {
     // This can happen on pages where uBlock does not work
     if ( typeof popupData.pageHostname !== 'string' || popupData.pageHostname === '' ) {
         return;
     }
-    var onDynamicFilterChanged = function(response) {
+    var onFirewallRuleChanged = function(response) {
         cachePopupData(response);
-        updateAllDynamicFilters();
+        updateAllFirewallCells();
         hashFromPopupData();
     };
     messager.send({
-        what: 'toggleDynamicFilter',
+        what: 'toggleFirewallRule',
         tabId: popupData.tabId,
         pageHostname: popupData.pageHostname,
         srcHostname: src,
         desHostname: des,
         requestType: type,
-        action: action
-    }, onDynamicFilterChanged);
+        action: action,
+        persist: persist
+    }, onFirewallRuleChanged);
 };
 
 /******************************************************************************/
 
-var unsetDynamicFilterHandler = function() {
+var unsetFirewallRuleHandler = function(ev) {
     var cell = uDom(this);
-    setDynamicFilter(
+    setFirewallRule(
         cell.attr('data-src') === '/' ? '*' : popupData.pageHostname,
         cell.attr('data-des'),
         cell.attr('data-type'),
-        0
+        0,
+        ev.ctrlKey || ev.metaKey
     );
     dfHotspots.appendTo(cell);
 };
 
 /******************************************************************************/
 
-var setDynamicFilterHandler = function() {
+var setFirewallRuleHandler = function(ev) {
     var hotspot = uDom(this);
     var cell = hotspot.ancestors('[data-src]');
     if ( cell.length === 0 ) {
@@ -523,11 +544,12 @@ var setDynamicFilterHandler = function() {
     } else {
         action = 1;
     }
-    setDynamicFilter(
+    setFirewallRule(
         cell.attr('data-src') === '/' ? '*' : popupData.pageHostname,
         cell.attr('data-des'),
         cell.attr('data-type'),
-        action
+        action,
+        ev.ctrlKey || ev.metaKey
     );
     dfHotspots.detach();
 };
@@ -538,6 +560,25 @@ var reloadTab = function() {
     messager.send({ what: 'reloadTab', tabId: popupData.tabId });
 
     // Polling will take care of refreshing the popup content
+
+    // https://github.com/gorhill/uBlock/issues/748
+    // User forces a reload, assume the popup has to be updated regardless if
+    // there were changes or not.
+    popupData.contentLastModified = -1;
+
+    // No need to wait to remove this.
+    uDom('body').toggleClass('dirty', false);
+};
+
+/******************************************************************************/
+
+var saveFirewallRules = function() {
+    messager.send({
+        what: 'saveFirewallRules',
+        srcHostname: popupData.pageHostname,
+        desHostnames: popupData.hostnameDict
+    });
+    uDom('#firewallContainer').removeClass('dirty');
 };
 
 /******************************************************************************/
@@ -614,8 +655,9 @@ uDom.onLoad(function() {
     uDom('#switch').on('click', toggleNetFilteringSwitch);
     uDom('#gotoPick').on('click', gotoPick);
     uDom('a[href]').on('click', gotoURL);
-    uDom('h2').on('click', toggleDynamicFiltering);
+    uDom('h2').on('click', toggleFirewallPane);
     uDom('#refresh').on('click', reloadTab);
+    uDom('#saveRules').on('click', saveFirewallRules);
 });
 
 /******************************************************************************/

@@ -32,7 +32,6 @@
     var vAPI = self.vAPI = self.vAPI || {};
 
     vAPI.safari = true;
-    var noopFunc = function(){};
 
     /******************************************************************************/
 
@@ -71,6 +70,7 @@
 
             if(keys === null) {
                 for(i in this._storage) {
+                    if(!this._storage.hasOwnProperty(i)) continue;
                     value = this._storage[i];
 
                     if(typeof value === 'string') {
@@ -93,6 +93,7 @@
                 }
             } else if(typeof keys === 'object') {
                 for(i in keys) {
+                    if(!keys.hasOwnProperty(i)) continue;
                     value = this._storage[i];
 
                     if(typeof value === 'string') {
@@ -197,7 +198,6 @@
                 }
             }
         }, true);
-
         // onClosed handled in the main tab-close event
         // onUpdated handled via monitoring the history.pushState on web-pages
         // onPopup is handled in window.open on web-pages
@@ -240,7 +240,7 @@
             index: tab.browserWindow.tabs.indexOf(tab),
             windowId: safari.application.browserWindows.indexOf(tab.browserWindow),
             active: tab === tab.browserWindow.activeTab,
-            url: tab.url,
+            url: tab.url || "about:blank",
             title: tab.title
         });
     };
@@ -272,7 +272,9 @@
                 var url = details.url.replace(rgxHash, '');
 
                 for(var i = 0; i < win.tabs.length; i++) {
-                    if(win.tabs[i].url.replace(rgxHash, '') === url) {
+                    // Some tabs don't have a URL
+                    if(win.tabs[i].url &&
+                       win.tabs[i].url.replace(rgxHash, '') === url) {
                         win.tabs[i].activate();
                         return true;
                     }
@@ -296,7 +298,7 @@
             details.index = curWin.tabs.indexOf(curWin.activeTab) + 1;
         }
 
-        tab = details.tabId && this.stack[details.tabId] || curWin.openTab(details.active ? 'foreground' : 'background');
+        tab = (details.tabId ? this.stack[details.tabId] : curWin.openTab(details.active ? 'foreground' : 'background'));
 
         if(details.index !== undefined) {
             curWin.insertTab(tab, details.index);
@@ -346,22 +348,23 @@
 
         if(details.file) {
             var xhr = new XMLHttpRequest();
-            xhr.overrideMimeType('application/x-javascript;charset=utf-8');
-            xhr.open('GET', details.file, false);
+            xhr.open('GET', details.file, true);
+            xhr.addEventListener("readystatechange", function() {
+                if(this.readyState === 4) {
+                    details.code = xhr.responseText;
+                    tab.page.dispatchMessage('broadcast', {
+                        channelName: 'vAPI',
+                        msg: {
+                            cmd: 'injectScript',
+                            details: details
+                        }
+                    });
+                    if(typeof callback === 'function') {
+                        setTimeout(callback, 13);
+                    }
+                }
+            });
             xhr.send();
-            details.code = xhr.responseText;
-        }
-
-        tab.page.dispatchMessage('broadcast', {
-            channelName: 'vAPI',
-            msg: {
-                cmd: 'injectScript',
-                details: details
-            }
-        });
-
-        if(typeof callback === 'function') {
-            setTimeout(callback, 13);
         }
     };
 
@@ -431,8 +434,11 @@
 
     // reload the popup when that is opened
     safari.application.addEventListener('popover', function(e) {
-        e.target.contentWindow.document.body.textContent = '';
-        e.target.contentWindow.location.reload();
+        var w = e.target.contentWindow, body = w.document.body, child;
+        while(child = body.firstChild) {
+            body.removeChild(child);
+        }
+        w.location.reload();
     }, true);
 
     /******************************************************************************/
@@ -482,7 +488,7 @@
     vAPI.messaging = {
         listeners: {},
         defaultHandler: null,
-        NOOPFUNC: noopFunc, 
+        NOOPFUNC: function() {}, 
         UNHANDLED: 'vAPI.messaging.notHandled'
     };
 

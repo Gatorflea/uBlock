@@ -152,7 +152,7 @@
     "description":""
   },
   "popupAnyRulePrompt":{
-    "message":"all",
+    "message":"全部",
     "description":""
   },
   "popupImageRulePrompt":{
@@ -160,7 +160,7 @@
     "description":""
   },
   "popup3pAnyRulePrompt":{
-    "message":"3rd-party",
+    "message":"第三方",
     "description":""
   },
   "popupInlineScriptRulePrompt":{
@@ -180,11 +180,11 @@
     "description":""
   },
   "popupHitDomainCountPrompt":{
-    "message":"domains connected",
+    "message":"個域名已連結",
     "description":"appears in popup"
   },
   "popupHitDomainCount":{
-    "message":"{{count}} out of {{total}}",
+    "message":"{{count}} \/ {{total}}",
     "description":"appears in popup"
   },
   "pickerCreate":{
@@ -338,6 +338,22 @@
   "1pApplyChanges":{
     "message":"套用變更",
     "description":"English: Apply changes"
+  },
+  "rulesPermanentHeader":{
+    "message":"Permanent rules",
+    "description":"header"
+  },
+  "rulesTemporaryHeader":{
+    "message":"Temporary rules",
+    "description":"header"
+  },
+  "rulesRevert":{
+    "message":"Revert",
+    "description":"This will remove all temporary rules"
+  },
+  "rulesCommit":{
+    "message":"Commit",
+    "description":"This will persist temporary rules"
   },
   "rulesEdit":{
     "message":"編輯",

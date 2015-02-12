@@ -339,6 +339,22 @@
     "message":"Áp dụng các thay đổi",
     "description":"English: Apply changes"
   },
+  "rulesPermanentHeader":{
+    "message":"Quy tắc vĩnh viễn",
+    "description":"header"
+  },
+  "rulesTemporaryHeader":{
+    "message":"Quy tắc tạm thời",
+    "description":"header"
+  },
+  "rulesRevert":{
+    "message":"Phục hồi",
+    "description":"This will remove all temporary rules"
+  },
+  "rulesCommit":{
+    "message":"Xác nhận",
+    "description":"This will persist temporary rules"
+  },
   "rulesEdit":{
     "message":"Chỉnh sửa",
     "description":"Will enable manual-edit mode (textarea)"

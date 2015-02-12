@@ -339,6 +339,22 @@
     "message":"اعمال تغییرات",
     "description":"English: Apply changes"
   },
+  "rulesPermanentHeader":{
+    "message":"قوانین دائمی",
+    "description":"header"
+  },
+  "rulesTemporaryHeader":{
+    "message":"قوانین موقت",
+    "description":"header"
+  },
+  "rulesRevert":{
+    "message":"بازگرداندن",
+    "description":"This will remove all temporary rules"
+  },
+  "rulesCommit":{
+    "message":"ذخیره در منبع",
+    "description":"This will persist temporary rules"
+  },
   "rulesEdit":{
     "message":"ویرایش",
     "description":"Will enable manual-edit mode (textarea)"

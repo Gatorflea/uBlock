@@ -180,11 +180,11 @@
     "description":""
   },
   "popupHitDomainCountPrompt":{
-    "message":"domains connected",
+    "message":"domini collegati",
     "description":"appears in popup"
   },
   "popupHitDomainCount":{
-    "message":"{{count}} out of {{total}}",
+    "message":"{{count}} di {{total}}",
     "description":"appears in popup"
   },
   "pickerCreate":{
@@ -339,6 +339,22 @@
     "message":"Salva i cambiamenti",
     "description":"English: Apply changes"
   },
+  "rulesPermanentHeader":{
+    "message":"Regole permanenti",
+    "description":"header"
+  },
+  "rulesTemporaryHeader":{
+    "message":"Regole temporanee",
+    "description":"header"
+  },
+  "rulesRevert":{
+    "message":"Ripristina",
+    "description":"This will remove all temporary rules"
+  },
+  "rulesCommit":{
+    "message":"Applica",
+    "description":"This will persist temporary rules"
+  },
   "rulesEdit":{
     "message":"Modifica",
     "description":"Will enable manual-edit mode (textarea)"
@@ -356,7 +372,7 @@
     "description":""
   },
   "rulesExport":{
-    "message":"Esporta in file...",
+    "message":"Esporta in file",
     "description":""
   },
   "rulesDefaultFileName":{
